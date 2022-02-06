@@ -10,8 +10,8 @@ on:
 
 env:
   # Common versions
-  GO_VERSION: '1.14'
-  GOLANGCI_VERSION: 'v1.31.0'
+  GO_VERSION: '1.17'
+  GOLANGCI_VERSION: 'v1.31'
   DOCKER_BUILDX_VERSION: 'v0.4.2'
 
   # Common users. We can't run a step 'if secrets.AWS_USR != ""' but we can run
@@ -19,6 +19,7 @@ env:
   # credentials have been provided before trying to run steps that need them.
   DOCKER_USR: ${{ secrets.DOCKER_USR }}
   AWS_USR: ${{ secrets.AWS_USR }}
+
   DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
 
 jobs:
@@ -49,7 +50,7 @@ jobs:
 
       - name: Find the Go Build Cache
         id: go
-        run: echo "::set-output name=cache::$(go env GOCACHE)"
+        run: echo "::set-output name=cache::$(make go.cachedir)"
 
       - name: Cache the Go Build Cache
         uses: actions/cache@v2
@@ -95,7 +96,7 @@ jobs:
 
       - name: Find the Go Build Cache
         id: go
-        run: echo "::set-output name=cache::$(go env GOCACHE)"
+        run: echo "::set-output name=cache::$(make go.cachedir)"
 
       - name: Cache the Go Build Cache
         uses: actions/cache@v2
@@ -138,7 +139,7 @@ jobs:
 
       - name: Find the Go Build Cache
         id: go
-        run: echo "::set-output name=cache::$(go env GOCACHE)"
+        run: echo "::set-output name=cache::$(make go.cachedir)"
 
       - name: Cache the Go Build Cache
         uses: actions/cache@v2
@@ -198,7 +199,7 @@ jobs:
 
       - name: Find the Go Build Cache
         id: go
-        run: echo "::set-output name=cache::$(go env GOCACHE)"
+        run: echo "::set-output name=cache::$(make go.cachedir)"
 
       - name: Cache the Go Build Cache
         uses: actions/cache@v2
@@ -260,7 +261,7 @@ jobs:
 
       - name: Find the Go Build Cache
         id: go
-        run: echo "::set-output name=cache::$(go env GOCACHE)"
+        run: echo "::set-output name=cache::$(make go.cachedir)"
 
       - name: Cache the Go Build Cache
         uses: actions/cache@v2
@@ -285,20 +286,20 @@ jobs:
           # We're using docker buildx, which doesn't actually load the images it
           # builds by default. Specifying --load does so.
           BUILD_ARGS: "--load"
-
+      
       - name: Publish Artifacts to GitHub
         uses: actions/upload-artifact@v2
         with:
           name: output
           path: _output/**
-
+      
       - name: Login to Docker
         uses: docker/login-action@v1
         if: env.DOCKER_USR != ''
         with:
           username: ${{ secrets.DOCKER_USR }}
           password: ${{ secrets.DOCKER_PSW }}
-
+      
       - name: Publish Artifacts to S3 and Docker Hub
         run: make -j2 publish BRANCH_NAME=${GITHUB_REF##*/}
         if: env.AWS_USR != '' && env.DOCKER_USR != ''
@@ -306,12 +307,13 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_USR }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PSW }}
           GIT_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      
       - name: Promote Artifacts in S3 and Docker Hub
-        if: github.ref == 'refs/heads/master' && env.AWS_USR != '' && env.DOCKER_USR != ''
+        if: github.ref == 'refs/heads/main' && env.AWS_USR != '' && env.DOCKER_USR != ''
         run: make -j2 promote
         env:
-          BRANCH_NAME: master
-          CHANNEL: master
+          BRANCH_NAME: main
+          CHANNEL: main
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_USR }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_PSW }}
+        
