@@ -1,0 +1,10 @@
+apiVersion: repositories.github.crossplane.io/v1alpha1
+kind: Repository
+metadata:
+  name: sample
+spec:
+  forProvider:
+    owner: crossplane
+    org: crossplane
+  providerConfigRef:
+    name: default
