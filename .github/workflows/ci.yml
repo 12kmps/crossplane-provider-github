@@ -19,6 +19,7 @@ env:
   # credentials have been provided before trying to run steps that need them.
   DOCKER_USR: ${{ secrets.DOCKER_USR }}
   AWS_USR: ${{ secrets.AWS_USR }}
+  DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
 
 jobs:
   detect-noop:
