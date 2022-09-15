@@ -1,0 +1,12 @@
+project: 12kmps/crossplane-provider-github
+
+# Additional repositories related to your project
+repos:
+- 12kmps/crossplane-provider-github
+
+# Files and folders to send to TAC for review
+include:
+- README.md
+
+# Can be also be a glob pattern, example:
+# - docs/**
