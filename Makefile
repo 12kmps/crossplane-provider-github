@@ -50,7 +50,7 @@ GO111MODULE = on
 # ====================================================================================
 # Setup Images
 
-DOCKER_REGISTRY ?= crossplane
+DOCKER_REGISTRY ?= baas.jfrog.io
 IMAGES = provider-github provider-github-controller
 -include build/makelib/image.mk
 
