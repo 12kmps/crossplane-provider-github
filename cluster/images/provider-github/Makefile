@@ -6,7 +6,7 @@ include ../../../build/makelib/common.mk
 
 # ====================================================================================
 #  Options
-IMAGE = $(BUILD_REGISTRY)/provider-github-$(ARCH)
+IMAGE = $(BUILD_REGISTRY)/dkr-local-releases/platform/crossplane/provider-github-$(ARCH)
 OSBASEIMAGE = scratch
 include ../../../build/makelib/image.mk
 
