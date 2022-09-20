@@ -14,6 +14,7 @@ env:
   GOLANGCI_VERSION: 'v1.31'
   DOCKER_BUILDX_VERSION: 'v0.4.2'
   DOCKER_USR: ${{ secrets.DOCKER_USR }}
+  DOCKER_REPOSITORY: dkr-local-releases/platform/crossplane
   DOCKER_REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
 
 jobs:
