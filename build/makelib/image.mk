@@ -175,14 +175,14 @@ debug.nuke:
 		docker rmi -f $$i > /dev/null 2>&1; \
 	done
 
-# 1: registry 2: image, 3: arch
+# 1: registry, 2: image, 3: arch
 define repo.targets
 img.release.build.$(1).$(2).$(3):
 	@$(INFO) docker build $(1)/$(2)-$(3):$(VERSION)
-	@docker tag $(BUILD_REGISTRY)/$(2)-$(3) $(1)/$(2)-$(3):$(VERSION) || $(FAIL)
+	@docker tag $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/$(2)-$(3) $(1)/$(2)-$(3):$(VERSION) || $(FAIL)
 	@# Save image as _output/images/linux_<arch>/<image>.tar.gz (no builds for darwin or windows)
 	@mkdir -p $(OUTPUT_DIR)/images/linux_$(3) || $(FAIL)
-	@docker save $(BUILD_REGISTRY)/$(2)-$(3) | gzip -c > $(OUTPUT_DIR)/images/linux_$(3)/$(2).tar.gz || $(FAIL)
+	@docker save $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/$(2)-$(3) | gzip -c > $(OUTPUT_DIR)/images/linux_$(3)/$(2).tar.gz || $(FAIL)
 	@$(OK) docker build $(1)/$(2)-$(3):$(VERSION)
 img.release.build: img.release.build.$(1).$(2).$(3)
 
