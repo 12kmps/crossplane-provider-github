@@ -211,11 +211,11 @@ endef
 $(foreach r,$(REGISTRIES), $(foreach i,$(IMAGES), $(foreach a,$(IMAGE_ARCHS),$(eval $(call repo.targets,$(r),$(i),$(a))))))
 
 img.release.manifest.publish.%: img.release.publish $(MANIFEST_TOOL)
-	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(VERSION) || $(FAIL)
+	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(VERSION) || $(FAIL)
 
 img.release.manifest.promote.%: img.release.promote $(MANIFEST_TOOL)
-	@[ "$(CHANNEL)" = "master" ] || $(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(VERSION)-$(CHANNEL) || $(FAIL)
-	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(CHANNEL) || $(FAIL)
+	@[ "$(CHANNEL)" = "master" ] || $(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(VERSION)-$(CHANNEL) || $(FAIL)
+	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(CHANNEL) || $(FAIL)
 
 # ====================================================================================
 # Common Targets
