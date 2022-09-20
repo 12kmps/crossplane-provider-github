@@ -75,7 +75,7 @@ CACHE_DATE_FORMAT := "%Y-%m-%d.%H%M%S"
 CACHE_PRUNE_DATE := $(shell export TZ="UTC+$(PRUNE_HOURS)"; date +"$(CACHE_DATE_FORMAT)")
 CACHE_TAG := $(shell date -u +"$(CACHE_DATE_FORMAT)")
 
-REGISTRIES ?= $(DOCKER_REGISTRY)
+REGISTRIES ?= $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)
 IMAGE_ARCHS := $(subst linux_,,$(filter linux_%,$(PLATFORMS)))
 IMAGE_PLATFORMS := $(subst _,/,$(subst $(SPACE),$(COMMA),$(filter linux_%,$(PLATFORMS))))
 
