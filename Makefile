@@ -51,7 +51,8 @@ GO111MODULE = on
 # Setup Images
 
 DOCKER_REGISTRY ?= baas.jfrog.io
-IMAGES = dkr-local-releases/platform/crossplane/provider-github dkr-local-releases/platform/crossplane/provider-github-controller
+DOCKER_REPOSITORY ?= dkr-local-releases/platform/crossplane
+IMAGES = provider-github provider-github-controller
 -include build/makelib/image.mk
 
 # ====================================================================================
