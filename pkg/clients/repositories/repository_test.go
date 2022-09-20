@@ -22,7 +22,7 @@ import (
 	"github.com/google/go-github/v33/github"
 	"github.com/pkg/errors"
 
-	"github.com/crossplane-contrib/provider-github/apis/repositories/v1alpha1"
+	"github.com/12kmps/crossplane-provider-github/apis/repositories/v1alpha1"
 )
 
 var (

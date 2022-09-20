@@ -22,9 +22,9 @@ import (
 
 	"github.com/crossplane/crossplane-runtime/pkg/logging"
 
-	"github.com/crossplane-contrib/provider-github/pkg/controller/config"
-	"github.com/crossplane-contrib/provider-github/pkg/controller/organizations"
-	"github.com/crossplane-contrib/provider-github/pkg/controller/repositories"
+	"github.com/12kmps/crossplane-provider-github/pkg/controller/config"
+	"github.com/12kmps/crossplane-provider-github/pkg/controller/organizations"
+	"github.com/12kmps/crossplane-provider-github/pkg/controller/repositories"
 )
 
 // Setup creates all GitHub controllers with the supplied logger and adds them
