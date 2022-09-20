@@ -6,7 +6,7 @@ include ../../../build/makelib/common.mk
 
 # ====================================================================================
 #  Options
-IMAGE = $(BUILD_REGISTRY)/dkr-local-releases/platform/crossplane/provider-github-controller-$(ARCH)
+IMAGE = $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/provider-github-controller-$(ARCH)
 include ../../../build/makelib/image.mk
 
 # ====================================================================================
