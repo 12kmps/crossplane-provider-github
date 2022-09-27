@@ -1,5 +1,90 @@
 # provider-github
 
+---
+
+## Testing the Provider Locally
+
+1. install minikube
+2. `minikube start`
+3. `kubectl create namespace crossplane-system`
+4. `helm repo add crossplane-stable https://charts.crossplane.io/stable`
+5. `helm repo update`
+6. `helm install crossplane --namespace crossplane-system crossplane-stable/crossplane`
+7. Using kubectl, apply a Secret containing credentials for the artifactory registry
+    ```yaml
+    apiVersion: v1
+    type: kubernetes.io/dockerconfigjson
+    data:
+      .dockerconfigjson: {{ your secret here }}
+    kind: Secret
+    metadata:
+      creationTimestamp: "2022-09-26T03:59:26Z"
+      name: baasjfrogio
+      namespace: crossplane-system
+      resourceVersion: "7137"
+      uid: df543815-f80d-4d7a-acd7-e019311bc1a3 
+    ```
+8. Using kubectl, apply a Secret containing credentials for GitHub, ensuring the credential has CRUD repo scopes
+    ```yaml
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: gh-creds
+      namespace: crossplane-system
+    type: Opaque
+    stringData:
+      credentials: {{ your github token }}
+    ```
+9. Using kubectl, apply the Provider to the cluster
+    ```yaml
+    apiVersion: pkg.crossplane.io/v1
+    kind: Provider
+    metadata:
+      name: provider-gh
+      namespace: crossplane-system
+    spec:
+      package: baas.jfrog.io/dkr-local-releases/platform/crossplane/provider-github:v0.0.0-79.g5af9b24
+      packagePullPolicy: IfNotPresent
+      revisionActivationPolicy: Automatic
+      revisionHistoryLimit: 1
+      packagePullSecrets:
+        - name: baasjfrogio # {{ name of artifactory secret, in the same namespace}}
+    ```
+10. Using kubectl, apply the ProviderConfig to the cluster
+    ```yaml
+    apiVersion: github.crossplane.io/v1beta1
+    kind: ProviderConfig
+    metadata:
+      name: provider-gh-config
+      namespace: crossplane-system
+    spec:
+      credentials:
+        source: Secret 
+        secretRef:
+          namespace: crossplane-system 
+          name: gh-creds # {{ name of github creds secret, in the same namespace }} 
+          key: credentials
+    ```
+11. Using kubectl, apply a test Claim to the cluster
+    ```yaml
+    apiVersion: repositories.github.crossplane.io/v1alpha1
+    kind: Repository
+    metadata:
+     name: test-repo # {{ name of repo }} 
+    spec:
+      forProvider:
+        owner: pgmitche # {{ name of repo owner }} 
+        description: proving provider utility
+      providerConfigRef:
+        name: provider-gh-config # {{ name of ProviderConfig in same namespace }}
+    ```
+
+---
+
+# Forks source README below
+
+---
+
 ## Overview
 
 `provider-github` is the Crossplane infrastructure provider for
@@ -47,6 +132,7 @@ Please use the following to reach members of the community:
 provider-github goals and milestones are currently tracked in the Crossplane
 repository. More information can be found in
 [ROADMAP.md](https://github.com/crossplane/crossplane/blob/master/ROADMAP.md).
+
 
 ## Governance and Owners
 
