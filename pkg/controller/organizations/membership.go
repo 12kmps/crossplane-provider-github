@@ -17,8 +17,8 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplane-contrib/provider-github/apis/organizations/v1alpha1"
-	ghclient "github.com/crossplane-contrib/provider-github/pkg/clients"
+	"github.com/12kmps/crossplane-provider-github/apis/organizations/v1alpha1"
+	ghclient "github.com/12kmps/crossplane-provider-github/pkg/clients"
 )
 
 const (

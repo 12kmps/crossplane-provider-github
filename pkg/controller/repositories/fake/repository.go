@@ -16,7 +16,7 @@ package fake
 import (
 	"context"
 
-	"github.com/crossplane-contrib/provider-github/pkg/clients/repositories"
+	"github.com/12kmps/crossplane-provider-github/pkg/clients/repositories"
 	"github.com/google/go-github/v33/github"
 )
 

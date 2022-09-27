@@ -1,8 +1,8 @@
 # ====================================================================================
 # Setup Project
 
-PROJECT_NAME := provider-github
-PROJECT_REPO := github.com/crossplane-contrib/$(PROJECT_NAME)
+PROJECT_NAME := crossplane-provider-github
+PROJECT_REPO := github.com/12kmps/$(PROJECT_NAME)
 
 PLATFORMS ?= linux_amd64 linux_arm64
 

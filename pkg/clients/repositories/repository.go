@@ -18,8 +18,8 @@ import (
 
 	"strings"
 
-	"github.com/crossplane-contrib/provider-github/apis/repositories/v1alpha1"
-	ghclient "github.com/crossplane-contrib/provider-github/pkg/clients"
+	"github.com/12kmps/crossplane-provider-github/apis/repositories/v1alpha1"
+	ghclient "github.com/12kmps/crossplane-provider-github/pkg/clients"
 	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"

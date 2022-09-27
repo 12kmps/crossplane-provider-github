@@ -28,7 +28,7 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/providerconfig"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplane-contrib/provider-github/apis/v1beta1"
+	"github.com/12kmps/crossplane-provider-github/apis/v1beta1"
 )
 
 // Setup adds a controller that reconciles ProviderConfigs by accounting for

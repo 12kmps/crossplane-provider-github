@@ -41,12 +41,12 @@ eval $(make --no-print-directory -C ${projectdir} build.vars)
 # ------------------------------
 
 SAFEHOSTARCH="${SAFEHOSTARCH:-amd64}"
-BUILD_IMAGE="${BUILD_REGISTRY}/${PROJECT_NAME}-${SAFEHOSTARCH}"
-CONTROLLER_IMAGE="${BUILD_REGISTRY}/${PROJECT_NAME}-controller-${SAFEHOSTARCH}"
+BUILD_IMAGE="${BUILD_REGISTRY}/${DOCKER_REPOSITORY}/provider-github-${SAFEHOSTARCH}"
+CONTROLLER_IMAGE="${BUILD_REGISTRY}/${DOCKER_REPOSITORY}/provider-github-controller-${SAFEHOSTARCH}"
 
 version_tag="$(cat ${projectdir}/_output/version)"
 # tag as latest version to load into kind cluster
-PACKAGE_CONTROLLER_IMAGE="${DOCKER_REGISTRY}/${PROJECT_NAME}-controller:${VERSION}"
+PACKAGE_CONTROLLER_IMAGE="${DOCKER_REGISTRY}/${DOCKER_REPOSITORY}/provider-github-controller:${VERSION}"
 K8S_CLUSTER="${K8S_CLUSTER:-${BUILD_REGISTRY}-inttests}"
 
 CROSSPLANE_NAMESPACE="crossplane-system"
@@ -151,7 +151,7 @@ echo_step "--- INTEGRATION TESTS ---"
 echo_step "installing ${PROJECT_NAME} into \"${CROSSPLANE_NAMESPACE}\" namespace"
 
 INSTALL_YAML="$( cat <<EOF
-apiVersion: pkg.crossplane.io/v1beta1
+apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: "${PACKAGE_NAME}"
@@ -169,7 +169,7 @@ docker exec "${K8S_CLUSTER}-control-plane" ls -la /cache
 
 echo_step "waiting for provider to be installed"
 
-kubectl wait "provider.pkg.crossplane.io/${PACKAGE_NAME}" --for=condition=healthy --timeout=60s
+kubectl wait "provider.pkg.crossplane.io/${PACKAGE_NAME}" --for=condition=healthy --timeout=120s
 
 echo_step "uninstalling ${PROJECT_NAME}"
 

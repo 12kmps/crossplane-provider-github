@@ -18,6 +18,7 @@ package repositories
 
 import (
 	"context"
+	"log"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-github/v33/github"
@@ -35,9 +36,9 @@ import (
 	"github.com/crossplane/crossplane-runtime/pkg/reconciler/managed"
 	"github.com/crossplane/crossplane-runtime/pkg/resource"
 
-	"github.com/crossplane-contrib/provider-github/apis/repositories/v1alpha1"
-	ghclient "github.com/crossplane-contrib/provider-github/pkg/clients"
-	"github.com/crossplane-contrib/provider-github/pkg/clients/repositories"
+	"github.com/12kmps/crossplane-provider-github/apis/repositories/v1alpha1"
+	ghclient "github.com/12kmps/crossplane-provider-github/pkg/clients"
+	"github.com/12kmps/crossplane-provider-github/pkg/clients/repositories"
 )
 
 const (
@@ -113,6 +114,13 @@ func (e *external) Observe(ctx context.Context, mgd resource.Managed) (managed.E
 		meta.GetExternalName(cr),
 		cr.Status.AtProvider.Name,
 	)
+
+	// Panics seem to be commonly occurring when calling
+	// res.StatusCode below.
+	log.Printf("REPO: %+v", r)
+	log.Printf("RESP: %+v", res)
+	log.Printf("ERR: %+v", err)
+
 	if err != nil {
 		if res.StatusCode == 404 {
 			return managed.ExternalObservation{}, nil
