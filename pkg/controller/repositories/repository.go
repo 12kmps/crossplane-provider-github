@@ -18,6 +18,7 @@ package repositories
 
 import (
 	"context"
+	"log"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-github/v33/github"
@@ -113,6 +114,13 @@ func (e *external) Observe(ctx context.Context, mgd resource.Managed) (managed.E
 		meta.GetExternalName(cr),
 		cr.Status.AtProvider.Name,
 	)
+
+	// Panics seem to be commonly occurring when calling
+	// res.StatusCode below.
+	log.Printf("REPO: %+v", r)
+	log.Printf("RESP: %+v", res)
+	log.Printf("ERR: %+v", err)
+
 	if err != nil {
 		if res.StatusCode == 404 {
 			return managed.ExternalObservation{}, nil

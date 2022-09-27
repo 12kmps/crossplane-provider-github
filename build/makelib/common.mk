@@ -326,7 +326,7 @@ do.build.artifacts: $(foreach p,$(PLATFORMS), do.build.artifacts.$(p))
 # build for all platforms
 build.all:
 	@$(MAKE) build.init
-	@$(MAKE) build.check
+#	@$(MAKE) build.check
 	@$(MAKE) build.code
 	@$(MAKE) do.build.platform
 	@$(MAKE) build.artifacts
