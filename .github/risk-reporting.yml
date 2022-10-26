@@ -1,0 +1,6 @@
+project: 12kmps/crossplane-provider-github
+# output: risks.yml
+
+# include risk summary in the following files
+summary-files:
+  - README.md
