@@ -34,6 +34,11 @@ S3_SYNC_DEL := aws s3 sync --only-show-errors --delete
 # Targets
 
 output.init:
+	@$(INFO) Test ROOT_DIR: $(shell echo $(ROOT_DIR))
+	@$(INFO) Test OUTPUT_DIR: $(shell echo $(OUTPUT_DIR))
+	@$(INFO) Test COMMON_SELF_DIR: $(shell echo $(COMMON_SELF_DIR))
+
+#ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/../.. && pwd -P))	
 	@mkdir -p $(OUTPUT_DIR)
 	@echo "$(VERSION)" > $(OUTPUT_DIR)/version
 
