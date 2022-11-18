@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# DEPRECATED: this module has been replaced by imagelight.mk and may be removed
+# in the future.
+
 # ====================================================================================
 # Options
 
@@ -31,13 +35,20 @@ endif
 # supported platform.
 ifeq ($(origin OSBASEIMAGE),undefined)
 OSBASE ?= alpine:3.13
-ifeq ($(TARGETARCH),$(filter $(TARGETARCH),amd64 ppc64le))
+ifeq ($(ARCH),$(filter $(ARCH),amd64 ppc64le))
 OSBASEIMAGE = $(OSBASE)
-else ifeq ($(TARGETARCH),arm64)
+else ifeq ($(ARCH),arm64)
 OSBASEIMAGE = arm64v8/$(OSBASE)
 else
-$(error unsupported architecture $(TARGETARCH))
+$(error unsupported architecture $(ARCH))
 endif
+endif
+
+# shasum is not available on all systems. In that case, fall back to sha256sum.
+ifneq ($(shell type shasum 2>/dev/null),)
+SHA256SUM := shasum -a 256
+else
+SHA256SUM := sha256sum
 endif
 
 # a registry that is scoped to the current build tree on this host. this enables
@@ -45,10 +56,10 @@ endif
 # of multiple working directories or on a CI system with multiple executors. All images
 # tagged with this build registry can safely be untagged/removed at the end of the build.
 ifeq ($(origin BUILD_REGISTRY), undefined)
-BUILD_REGISTRY := build-$(shell echo $(HOSTNAME)-$(ROOT_DIR) | shasum -a 256 | cut -c1-8)
+BUILD_REGISTRY := build-$(shell echo $(HOSTNAME)-$(ROOT_DIR) | $(SHA256SUM) | cut -c1-8)
 endif
 
-MANIFEST_TOOL_VERSION=v0.7.0
+MANIFEST_TOOL_VERSION=v1.0.3
 MANIFEST_TOOL := $(TOOLS_HOST_DIR)/manifest-tool-$(MANIFEST_TOOL_VERSION)
 
 # In order to reduce built time especially on jenkins, we maintain a cache
@@ -75,7 +86,7 @@ CACHE_DATE_FORMAT := "%Y-%m-%d.%H%M%S"
 CACHE_PRUNE_DATE := $(shell export TZ="UTC+$(PRUNE_HOURS)"; date +"$(CACHE_DATE_FORMAT)")
 CACHE_TAG := $(shell date -u +"$(CACHE_DATE_FORMAT)")
 
-REGISTRIES ?= $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)
+REGISTRIES ?= $(DOCKER_REGISTRY)
 IMAGE_ARCHS := $(subst linux_,,$(filter linux_%,$(PLATFORMS)))
 IMAGE_PLATFORMS := $(subst _,/,$(subst $(SPACE),$(COMMA),$(filter linux_%,$(PLATFORMS))))
 
@@ -175,14 +186,14 @@ debug.nuke:
 		docker rmi -f $$i > /dev/null 2>&1; \
 	done
 
-# 1: registry, 2: image, 3: arch
+# 1: registry 2: image, 3: arch
 define repo.targets
 img.release.build.$(1).$(2).$(3):
 	@$(INFO) docker build $(1)/$(2)-$(3):$(VERSION)
-	@docker tag $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/$(2)-$(3) $(1)/$(2)-$(3):$(VERSION) || $(FAIL)
+	@docker tag $(BUILD_REGISTRY)/$(2)-$(3) $(1)/$(2)-$(3):$(VERSION) || $(FAIL)
 	@# Save image as _output/images/linux_<arch>/<image>.tar.gz (no builds for darwin or windows)
 	@mkdir -p $(OUTPUT_DIR)/images/linux_$(3) || $(FAIL)
-	@docker save $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/$(2)-$(3) | gzip -c > $(OUTPUT_DIR)/images/linux_$(3)/$(2).tar.gz || $(FAIL)
+	@docker save $(BUILD_REGISTRY)/$(2)-$(3) | gzip -c > $(OUTPUT_DIR)/images/linux_$(3)/$(2).tar.gz || $(FAIL)
 	@$(OK) docker build $(1)/$(2)-$(3):$(VERSION)
 img.release.build: img.release.build.$(1).$(2).$(3)
 
@@ -211,11 +222,11 @@ endef
 $(foreach r,$(REGISTRIES), $(foreach i,$(IMAGES), $(foreach a,$(IMAGE_ARCHS),$(eval $(call repo.targets,$(r),$(i),$(a))))))
 
 img.release.manifest.publish.%: img.release.publish $(MANIFEST_TOOL)
-	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(VERSION) || $(FAIL)
+	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(VERSION) || $(FAIL)
 
 img.release.manifest.promote.%: img.release.promote $(MANIFEST_TOOL)
-	@[ "$(CHANNEL)" = "master" ] || $(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(VERSION)-$(CHANNEL) || $(FAIL)
-	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$(DOCKER_REPOSITORY)/$*:$(CHANNEL) || $(FAIL)
+	@[ "$(CHANNEL)" = "master" ] || $(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(VERSION)-$(CHANNEL) || $(FAIL)
+	@$(MANIFEST_TOOL) push from-args --platforms $(IMAGE_PLATFORMS) --template $(DOCKER_REGISTRY)/$*-ARCH:$(VERSION) --target $(DOCKER_REGISTRY)/$*:$(CHANNEL) || $(FAIL)
 
 # ====================================================================================
 # Common Targets
@@ -259,6 +270,8 @@ endif
 prune: img.prune
 
 define IMAGE_HELPTEXT
+DEPRECATED: this module has been replaced by imagelight.mk and may be removed in the future. 
+
 Image Targets:
     prune        Prune orphaned and cached images.
 

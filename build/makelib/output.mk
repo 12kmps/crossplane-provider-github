@@ -34,6 +34,7 @@ S3_SYNC_DEL := aws s3 sync --only-show-errors --delete
 # Targets
 
 output.init:
+	@$(INFO) $(shell echo $(OUTPUT_DIR))
 	@mkdir -p $(OUTPUT_DIR)
 	@echo "$(VERSION)" > $(OUTPUT_DIR)/version
 
