@@ -6,7 +6,7 @@ include ../../../build/makelib/common.mk
 
 # ====================================================================================
 #  Options
-IMAGE = $(BUILD_REGISTRY)/$(DOCKER_REPOSITORY)/provider-github-$(ARCH)
+IMAGE = $(BUILD_REGISTRY)/provider-github-$(ARCH)
 OSBASEIMAGE = scratch
 include ../../../build/makelib/image.mk
 
@@ -15,6 +15,7 @@ include ../../../build/makelib/image.mk
 
 img.build:
 	@$(INFO) docker build $(IMAGE)
+	@$(INFO) docker build $(BUILD_ARGS)
 	@cp Dockerfile $(IMAGE_TEMP_DIR) || $(FAIL)
 	@cp -R ../../../package $(IMAGE_TEMP_DIR) || $(FAIL)
 	@cd $(IMAGE_TEMP_DIR) && $(SED_CMD) 's|BASEIMAGE|$(OSBASEIMAGE)|g' Dockerfile || $(FAIL)
