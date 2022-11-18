@@ -1,5 +1,5 @@
 FROM BASEIMAGE
-RUN apk --no-cache add ca-certificates bash
+RUN apk --no-cache --repository https://artifactory.internal.cba:443/artifactory/alpine/v3.15/main add ca-certificates bash
 
 ARG ARCH
 ARG TINI_VERSION
