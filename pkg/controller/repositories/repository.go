@@ -81,7 +81,7 @@ func SetupRepository(mgr ctrl.Manager, l logging.Logger, rl workqueue.RateLimite
 
 type connector struct {
 	client      client.Client
-	newClientFn func(string) *repositories.Service
+	newClientFn func(string, string, string) *repositories.Service
 }
 
 func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.ExternalClient, error) {
@@ -89,11 +89,11 @@ func (c *connector) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	if !ok {
 		return nil, errors.New(errUnexpectedObject)
 	}
-	cfg, err := ghclient.GetConfig(ctx, c.client, cr)
+	baseURL, uploadURL, cfg, err := ghclient.GetConfig(ctx, c.client, cr)
 	if err != nil {
 		return nil, err
 	}
-	return &external{*c.newClientFn(string(cfg)), c.client}, nil
+	return &external{*c.newClientFn(string(cfg), baseURL, uploadURL), c.client}, nil
 }
 
 type external struct {

@@ -32,27 +32,35 @@ import (
 )
 
 // GetConfig gets the config.
-func GetConfig(ctx context.Context, c client.Client, mg resource.Managed) ([]byte, error) {
+func GetConfig(ctx context.Context, c client.Client, mg resource.Managed) (string, string, []byte, error) {
 	pc := &v1beta1.ProviderConfig{}
 	if err := c.Get(ctx, types.NamespacedName{Name: mg.GetProviderConfigReference().Name}, pc); err != nil {
-		return nil, errors.Wrap(err, "cannot get referenced ProviderConfig")
+		return "", "", nil, errors.Wrap(err, "cannot get referenced ProviderConfig")
 	}
 
 	t := resource.NewProviderConfigUsageTracker(c, &v1beta1.ProviderConfigUsage{})
 	if err := t.Track(ctx, mg); err != nil {
-		return nil, errors.Wrap(err, "cannot track ProviderConfig usage")
+		return "", "", nil, errors.Wrap(err, "cannot track ProviderConfig usage")
 	}
 
-	return resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, c, pc.Spec.Credentials.CommonCredentialSelectors)
+	byte, err := resource.CommonCredentialExtractor(ctx, pc.Spec.Credentials.Source, c, pc.Spec.Credentials.CommonCredentialSelectors)
+
+	return pc.Spec.Client.BaseURL, pc.Spec.Client.UploadURL, byte, err
 }
 
 // NewClient creates a new client.
-func NewClient(token string) *github.Client {
+func NewClient(token string, baseURL string, uploadURL string) *github.Client {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
 	)
 	tc := oauth2.NewClient(ctx, ts)
+
+	if baseURL != "" && uploadURL != "" {
+		c, _ := github.NewEnterpriseClient(baseURL, uploadURL, tc)
+
+		return c
+	}
 
 	return github.NewClient(tc)
 }
