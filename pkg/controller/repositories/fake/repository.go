@@ -30,6 +30,7 @@ type MockService struct {
 	MockEdit               func(ctx context.Context, owner, repo string, repository *github.Repository) (*github.Repository, *github.Response, error)
 	MockDelete             func(ctx context.Context, owner, repo string) (*github.Response, error)
 	MockCreateFromTemplate func(ctx context.Context, templateOwner, templateRepo string, templateRepoReq *github.TemplateRepoRequest) (*github.Repository, *github.Response, error)
+	MockReplaceAllTopics   func(ctx context.Context, owner, repo string, topics []string) ([]string, *github.Response, error)
 }
 
 // Create is a fake Create SDK method
@@ -55,4 +56,9 @@ func (m *MockService) Delete(ctx context.Context, owner, repo string) (*github.R
 // CreateFromTemplate is a fake CreateFromTemplate SDK method
 func (m *MockService) CreateFromTemplate(ctx context.Context, templateOwner, templateRepo string, templateRepoReq *github.TemplateRepoRequest) (*github.Repository, *github.Response, error) {
 	return m.MockCreateFromTemplate(ctx, templateOwner, templateRepo, templateRepoReq)
+}
+
+// ReplaceAllTopics is a fake ReplaceAllTopics SDK method
+func (m *MockService) ReplaceAllTopics(ctx context.Context, owner, repo string, topics []string) ([]string, *github.Response, error) {
+	return m.MockReplaceAllTopics(ctx, owner, repo, topics)
 }

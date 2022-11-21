@@ -156,6 +156,11 @@ type RepositoryParameters struct {
 	// +optional
 	// +immutable
 	Template *xpv1.Reference `json:"templateRef,omitempty"`
+
+	// Topics about the repository
+	// Example: "kubernetes".
+	// +optional
+	Topics []string `json:"topics,omitempty"`
 }
 
 // RepositorySpec defines the desired state of a Repository.

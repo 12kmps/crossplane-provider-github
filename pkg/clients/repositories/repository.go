@@ -40,12 +40,14 @@ type Service interface {
 	Edit(ctx context.Context, owner, repo string, repository *github.Repository) (*github.Repository, *github.Response, error)
 	Delete(ctx context.Context, owner, repo string) (*github.Response, error)
 	CreateFromTemplate(ctx context.Context, templateOwner, templateRepo string, templateRepoReq *github.TemplateRepoRequest) (*github.Repository, *github.Response, error)
+	ReplaceAllTopics(ctx context.Context, owner, repo string, topics []string) ([]string, *github.Response, error)
 }
 
 // NewService creates a new Service based on the *github.Client
 // returned by the NewClient SDK method.
 func NewService(token string) *Service {
 	c := ghclient.NewClient(token)
+	//c := ghclient.NewEnterpriseClient(token)
 	r := Service(c.Repositories)
 	return &r
 }
@@ -135,6 +137,9 @@ func OverrideParameters(rp v1alpha1.RepositoryParameters, r github.Repository, n
 	}
 	if rp.Archived != nil {
 		r.Archived = rp.Archived
+	}
+	if rp.Topics != nil {
+		r.Topics = rp.Topics
 	}
 	return r
 }
@@ -282,6 +287,9 @@ func LateInitialize(rp *v1alpha1.RepositoryParameters, r *github.Repository, c x
 		rp.Template = &xpv1.Reference{
 			Name: *r.TemplateRepository.FullName,
 		}
+	}
+	if rp.Topics == nil && r.Topics != nil {
+		rp.Topics = r.Topics
 	}
 
 	// This condition below is necessary because the GitHub API is not strongly

@@ -232,6 +232,20 @@ func (e *external) CreateRepository(ctx context.Context, repository v1alpha1.Rep
 			ghclient.StringValue(repository.Organization),
 			&repo,
 		)
+
+		if err == nil {
+			_, _, errTopic := e.gh.ReplaceAllTopics(
+				ctx,
+				repository.Owner,
+				name,
+				repository.Topics,
+			)
+
+			if errTopic != nil {
+				return errTopic
+			}
+		}
+
 		return err
 	}
 	templateRef, err := repositories.SplitFullName(repository.Template.Name)
@@ -241,8 +255,23 @@ func (e *external) CreateRepository(ctx context.Context, repository v1alpha1.Rep
 
 	repo := repositories.GenerateTemplateRepoRequest(repository, name)
 	_, res, err := e.gh.CreateFromTemplate(ctx, templateRef["owner"], templateRef["name"], &repo)
+
 	if res.StatusCode == 404 {
 		return errors.Wrap(err, errTemplateNotFound)
 	}
+
+	if err == nil {
+		_, _, errTopic := e.gh.ReplaceAllTopics(
+			ctx,
+			repository.Owner,
+			name,
+			repository.Topics,
+		)
+
+		if errTopic != nil {
+			return errTopic
+		}
+	}
+
 	return err
 }
