@@ -26,6 +26,8 @@ import (
 type ProviderConfigSpec struct {
 	// Credentials required to authenticate to this provider.
 	Credentials ProviderCredentials `json:"credentials"`
+
+	Client ProviderClient `json:"client,omitempty"`
 }
 
 // ProviderCredentials required to authenticate.
@@ -35,6 +37,15 @@ type ProviderCredentials struct {
 	Source xpv1.CredentialsSource `json:"source"`
 
 	xpv1.CommonCredentialSelectors `json:",inline"`
+}
+
+// ProviderClient defines GitHub base and upload URL
+type ProviderClient struct {
+	// Base URL of GitHub Enterprise
+	BaseURL string `json:"baseUrl"`
+
+	// Upload URL of GitHub Enterprise
+	UploadURL string `json:"uploadUrl,omitempty"`
 }
 
 // A ProviderConfigStatus represents the status of a ProviderConfig.

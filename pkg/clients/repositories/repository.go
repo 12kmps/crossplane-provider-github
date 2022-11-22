@@ -44,8 +44,8 @@ type Service interface {
 
 // NewService creates a new Service based on the *github.Client
 // returned by the NewClient SDK method.
-func NewService(token string) *Service {
-	c := ghclient.NewClient(token)
+func NewService(token string, baseURL string, uploadURL string) *Service {
+	c := ghclient.NewClient(token, baseURL, uploadURL)
 	r := Service(c.Repositories)
 	return &r
 }
