@@ -45,7 +45,7 @@ type ProviderClient struct {
 	BaseURL string `json:"baseUrl"`
 
 	// Upload URL of GitHub Enterprise
-	UploadURL string `json:"uploadUrl"`
+	UploadURL string `json:"uploadUrl,omitempty"`
 }
 
 // A ProviderConfigStatus represents the status of a ProviderConfig.

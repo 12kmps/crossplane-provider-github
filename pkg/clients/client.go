@@ -56,7 +56,11 @@ func NewClient(token string, baseURL string, uploadURL string) *github.Client {
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
-	if baseURL != "" && uploadURL != "" {
+	if baseURL != "" {
+		if uploadURL == "" {
+			uploadURL = baseURL
+		}
+
 		c, _ := github.NewEnterpriseClient(baseURL, uploadURL, tc)
 
 		return c

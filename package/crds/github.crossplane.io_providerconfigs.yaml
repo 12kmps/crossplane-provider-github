@@ -58,7 +58,6 @@ spec:
                     type: string
                 required:
                 - baseUrl
-                - uploadUrl
                 type: object
               credentials:
                 description: Credentials required to authenticate to this provider.
